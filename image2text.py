@@ -95,7 +95,11 @@ class TextExtractorApp:
 
         self.clear_button = tk.Button(
             self.master, text="Clear List", command=self.clear_listbox)
-        self.clear_button.grid(row=3, column=0)
+        self.clear_button.grid(row=4, column=0)
+
+        self.remove_button = tk.Button(
+            self.master, text="Remove Item", command=self.remove_listbox_item)
+        self.remove_button.grid(row=3, column=0)
 
         # prompt output
         self.label_prompt = tk.Label(self.master, text="Prompt Output")
@@ -149,6 +153,20 @@ class TextExtractorApp:
     def clear_listbox(self):
         self.prompt_listbox.delete(0, tk.END)
         self.text_widget.delete(1.0, tk.END)
+
+    def remove_listbox_item(self):
+        # Get the indices of the selected items in the listbox
+        selected_items = self.prompt_listbox.curselection()
+
+        # If no item is selected, show an error message and return
+        if len(selected_items) < 1:
+            messagebox.showerror(
+                "Error", "Please select at least 1 prompts to remove")
+            return
+
+        # Remove the selected items from the listbox
+        for i in selected_items[::-1]:
+            self.prompt_listbox.delete(i)
 
     def merge_prompts(self):
         selected_items = self.prompt_listbox.curselection()
