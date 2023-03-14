@@ -7,6 +7,7 @@ from clip_interrogator import Config, Interrogator
 import torch
 import random
 import re
+import base64
 
 # if you want this to cache to a specific folder
 # make sure you set TRANSFORMERS_CACHE environment variable
@@ -60,6 +61,9 @@ class TextExtractorApp:
             label="Image2Text from clipboard", command=self.on_clipboard)
         file_menu.add_command(
             label="Copy result to clipboard", command=self.on_copy)
+        file_menu.add_separator()
+        file_menu.add_command(label="Export List", command=self.export_list)
+        file_menu.add_command(label="Import List", command=self.import_list)
         file_menu.add_separator()
         file_menu.add_command(label="Exit", command=self.master.quit)
         menu_bar.add_cascade(label="File", menu=file_menu)
@@ -185,6 +189,27 @@ class TextExtractorApp:
 
         self.text_widget.delete(1.0, tk.END)
         self.text_widget.insert(tk.END, merged_prompt)
+
+    def export_list(self):
+        file_path = filedialog.asksaveasfilename(defaultextension=".txt")
+        if file_path:
+            with open(file_path, "wb") as f:
+                for prompt in self.prompt_listbox.get(0, tk.END):
+                    message_bytes = prompt.encode('ascii')
+                    base64_bytes = base64.b64encode(message_bytes)
+                    f.write(base64_bytes)
+                    f.write("\n".encode("ascii"))
+
+    def import_list(self):
+        file_path = filedialog.askopenfilename(defaultextension=".txt")
+        if file_path:
+            with open(file_path, "rb") as f:
+                lines = f.readlines()
+            self.prompt_listbox.delete(0, tk.END)
+            for line in lines:
+                encoded = line.rstrip()
+                decoded = base64.b64decode(encoded).decode('ascii')
+                self.prompt_listbox.insert(tk.END, decoded)
 
 
 root = tk.Tk()
