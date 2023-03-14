@@ -155,9 +155,17 @@ class TextExtractorApp:
 
         prompt_indices = [int(i) for i in selected_items]
         prompt_texts = [self.prompt_listbox.get(i) for i in prompt_indices]
+        temp_texts = []
+        prompt_starts = []
+        for prompt in prompt_texts:
+            prompt_parts = prompt.split(", ")
+            prompt_starts.append(prompt_parts[0] + ", ")
+            prompt_parts = prompt_parts[1:]
+            temp_texts.append(', '.join(prompt_parts))
+        prompt_texts = temp_texts
 
-        merged_prompt = ""
-        parts = [part.split(",") for part in prompt_texts]
+        merged_prompt = prompt_starts[random.randint(0, len(prompt_starts))]
+        parts = [part.split(", ") for part in prompt_texts]
         max_parts = max([len(part) for part in parts])
         loop_end = False
 
