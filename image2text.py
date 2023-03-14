@@ -172,6 +172,7 @@ class TextExtractorApp:
         for i in range(max_parts):
             for part in prompt_texts:
                 parts = part.split(", ")
+                random.shuffle(parts)
                 if i < len(parts):
                     if random.random() > 1 / len(selected_items):
                         merged = merged_prompt + parts[i] + ", "
